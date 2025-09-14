@@ -1,0 +1,15 @@
+.icon{
+  max-width: 24px;
+  max-height: 24px;
+  margin-right: 8px;
+}
+.brand{
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.25rem;
+  color: white !important;
+  background-color: pink;
+}
