@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.mjs';
-import * as diff from 'https://cdn.jsdelivr.net/npm/diff@5.2.0/+esm';
-import * as XLSX from 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm';
+import * as pdfjsLib from 'pdfjs-dist';
+import * as diff from 'diff';
+import * as XLSX from 'xlsx';
 
 // PDF.js Worker Setup
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.worker.mjs`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.mjs`;
 
 function App() {
   // All existing state management (unchanged)
