@@ -786,7 +786,7 @@ const HomePage = () => (
             <h2 style={styles.stepTitle}>Open Source Commitment</h2>
             <p style={{lineHeight: '1.7', marginTop: '0.5rem'}}>
                 We believe in transparency. AccuraRate is an open-source project. You are free to review the source code on our{' '}
-                <a href="https://github.com/example/accurarate" target="_blank" rel="noopener noreferrer" style={{color: '#3182ce', textDecoration: 'underline'}}>GitHub repository</a> to verify our privacy claims.
+                <a href="https://github.com/TestMasterHub/AccuraRate" target="_blank" rel="noopener noreferrer" style={{color: '#3182ce', textDecoration: 'underline'}}>GitHub repository</a> to verify our privacy claims.
             </p>
         </div>
     </div>
@@ -818,7 +818,7 @@ const HomePage = () => (
 
       <nav style={styles.navbar}>
         <div style={styles.navContainer}>
-          <div onClick={() => setPage('home')} style={styles.logo}>AccuraRate</div>
+          <div onClick={() => setPage('home')} style={styles.logo}>AccuraRate<sup style={{fontSize: '0.5em',fontFamily: 'sans-serif'}}> By TestMasterHub</sup></div>
           <div style={styles.navButtons}>
             {[
               { id: 'home', label: 'Home' },
@@ -851,7 +851,7 @@ const HomePage = () => (
           <p style={{fontSize: '0.9rem', opacity: 0.7, marginBottom: '1rem'}}>
             AccuraRate is an open-source project. Visit us on{' '}
             <a 
-              href="https://github.com/example/accurarate" 
+              href="https://github.com/TestMasterHub/AccuraRate" 
               target="_blank" 
               rel="noopener noreferrer"
               style={{color: '#1738deff', textDecoration: 'underline'}}
