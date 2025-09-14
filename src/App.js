@@ -233,6 +233,54 @@ function App() {
     return numbers.map(n => n.replace(/,/g, '')).join('\n');
   };
 
+  // Updated parseNumericComparison function for code editor style formatting
+  const parseNumericComparison = (oldText, newText, sectionTitle) => {
+    const oldLines = oldText.split('\n').filter(n => n.trim());
+    const newLines = newText.split('\n').filter(n => n.trim());
+    
+    // Create maps for old and new values
+    const oldMap = new Map();
+    const newMap = new Map();
+    
+    // Parse old values
+    oldLines.forEach(line => {
+      const [variable, value] = line.split('=').map(s => s.trim());
+      if (variable && value) {
+        oldMap.set(variable, value);
+      }
+    });
+    
+    // Parse new values
+    newLines.forEach(line => {
+      const [variable, value] = line.split('=').map(s => s.trim());
+      if (variable && value) {
+        newMap.set(variable, value);
+      }
+    });
+    
+    // Find all unique variables
+    const allVariables = new Set([...oldMap.keys(), ...newMap.keys()]);
+    
+    // Create comparison results
+    const comparison = [];
+    for (const variable of allVariables) {
+      const oldValue = oldMap.get(variable) || '0';
+      const newValue = newMap.get(variable) || '0';
+      
+      // Only include if there's actually a difference
+      if (oldValue !== newValue) {
+        comparison.push({
+          category: variable,
+          oldValue: oldValue,
+          newValue: newValue,
+          type: 'change'
+        });
+      }
+    }
+    
+    return comparison;
+  };
+
   const handleCompare = () => {
     setIsLoading(true);
     setError('');
@@ -250,13 +298,19 @@ function App() {
       if (onlyNumeric) {
         oldText = extractNumerics(oldText);
         newText = extractNumerics(newText);
-      }
-      
-      const differences = diff.diffLines(oldText.trim(), newText.trim(), { newlineIsToken: true, ignoreWhitespace: true });
-      const changes = differences.filter(part => part.added || part.removed);
-      
-      if (changes.length > 0) {
-        results.push({ title, changes });
+        
+        // Use structured numeric comparison for code editor style
+        const numericComparison = parseNumericComparison(oldText, newText, title);
+        if (numericComparison.length > 0) {
+          results.push({ title, changes: null, numericChanges: numericComparison });
+        }
+      } else {
+        const differences = diff.diffLines(oldText.trim(), newText.trim(), { newlineIsToken: true, ignoreWhitespace: true });
+        const changes = differences.filter(part => part.added || part.removed);
+        
+        if (changes.length > 0) {
+          results.push({ title, changes });
+        }
       }
     });
 
@@ -266,33 +320,47 @@ function App() {
 
   const handleExport = () => {
     const exportData = [];
-    comparisonResult.forEach(({ title, changes }) => {
-      let i = 0;
-      while (i < changes.length) {
-        const current = changes[i];
-        const next = (i + 1 < changes.length) ? changes[i + 1] : null;
+    comparisonResult.forEach(({ title, changes, numericChanges }) => {
+      if (numericChanges) {
+        // Export numeric changes
+        numericChanges.forEach(change => {
+          exportData.push({
+            'Section Title': title,
+            'Category': change.category,
+            'Old Value': change.oldValue,
+            'New Value': change.newValue,
+            'Difference Type': 'Numeric'
+          });
+        });
+      } else if (changes) {
+        // Export text changes
+        let i = 0;
+        while (i < changes.length) {
+          const current = changes[i];
+          const next = (i + 1 < changes.length) ? changes[i + 1] : null;
 
-        let row = {
-          'Section Title': title,
-          'Old Value': '',
-          'New Value': '',
-          'Difference Type': onlyNumeric ? 'Numeric' : 'Textual'
-        };
+          let row = {
+            'Section Title': title,
+            'Old Value': '',
+            'New Value': '',
+            'Difference Type': onlyNumeric ? 'Numeric' : 'Textual'
+          };
 
-        if (current.removed && next && next.added) {
-          row['Old Value'] = current.value.trim();
-          row['New Value'] = next.value.trim();
-          i += 2;
-        } else if (current.removed) {
-          row['Old Value'] = current.value.trim();
-          i++;
-        } else if (current.added) {
-          row['New Value'] = current.value.trim();
-          i++;
-        } else {
-          i++;
+          if (current.removed && next && next.added) {
+            row['Old Value'] = current.value.trim();
+            row['New Value'] = next.value.trim();
+            i += 2;
+          } else if (current.removed) {
+            row['Old Value'] = current.value.trim();
+            i++;
+          } else if (current.added) {
+            row['New Value'] = current.value.trim();
+            i++;
+          } else {
+            i++;
+          }
+          exportData.push(row);
         }
-        exportData.push(row);
       }
     });
     
@@ -306,7 +374,7 @@ function App() {
     }
   };
 
-  // REDESIGNED CSS Styles
+  // REDESIGNED CSS Styles with code editor theme
   const styles = {
     app: {
       backgroundColor: '#f4f7f9',
@@ -509,6 +577,56 @@ function App() {
       fontSize: '0.8rem',
       lineHeight: '1.5',
       background: '#ffffff',
+    },
+    // New code editor styles for numeric comparison
+    codeEditor: {
+      background: '#1e1e1e',
+      color: '#d4d4d4',
+      fontFamily: '"Fira Code", "Cascadia Code", Menlo, Monaco, Consolas, "Courier New", monospace',
+      fontSize: '0.85rem',
+      lineHeight: '1.6',
+      padding: '1rem',
+      borderRadius: '6px',
+      margin: 0,
+      overflow: 'auto',
+      border: '1px solid #3c3c3c',
+    },
+    codeLine: {
+      display: 'flex',
+      minHeight: '1.6em',
+      alignItems: 'center',
+    },
+    lineNumber: {
+      color: '#858585',
+      minWidth: '2.5em',
+      textAlign: 'right',
+      paddingRight: '1em',
+      userSelect: 'none',
+      fontSize: '0.8em',
+    },
+    codeContent: {
+      flex: 1,
+    },
+    sectionTitle: {
+      color: '#4fc1ff',
+      fontWeight: 'bold',
+    },
+    categoryName: {
+      color: '#dcdcaa',
+    },
+    operator: {
+      color: '#d4d4d4',
+    },
+    oldValue: {
+      color: '#f44747',
+      textDecoration: 'line-through',
+    },
+    newValue: {
+      color: '#4ec9b0',
+    },
+    arrow: {
+      color: '#569cd6',
+      fontWeight: 'bold',
     },
     diffAdded: {
       backgroundColor: '#f0fff4',
@@ -720,21 +838,61 @@ const HomePage = () => (
 
           {comparisonResult.length > 0 ? (
             <div style={styles.resultsContainer}>
-              {comparisonResult.map(({ title, changes }) => (
+              {comparisonResult.map(({ title, changes, numericChanges }) => (
                 <div key={title} style={styles.resultItem}>
                   <div style={styles.resultHeader}>{title}</div>
-                  <div style={styles.resultContent}>
-                    {changes.map((part, index) => (
-                      <div key={index} style={part.added ? styles.diffAdded : part.removed ? styles.diffRemoved : {}}>
-                        {part.value.trim().split('\n').map((line, i) => (
-                          <div key={i} style={{ display: 'flex' }}>
-                            <span style={{ marginRight: '0.5rem', userSelect: 'none' }}>{part.added ? '+' : '-'}</span>
-                            <span>{line}</span>
-                          </div>
-                        ))}
+                  {numericChanges ? (
+                    // Code editor style for numeric comparison
+                    <pre style={styles.codeEditor}>
+                      <div style={styles.codeLine}>
+                        <span style={styles.lineNumber}>1</span>
+                        <div style={styles.codeContent}>
+                          <span style={styles.sectionTitle}>{title.toLowerCase().replace(/\s+/g, '_')}_differences</span>
+                          <span style={styles.operator}>(</span>
+                          <span style={styles.oldValue}>Old</span>
+                          <span style={styles.arrow}> -> </span>
+                          <span style={styles.newValue}>New</span>
+                          <span style={styles.operator}>):</span>
+                        </div>
                       </div>
-                    ))}
-                  </div>
+                      {numericChanges.map((change, index) => (
+                        <div key={index}>
+                          <div style={styles.codeLine}>
+                            <span style={styles.lineNumber}>{index + 2}</span>
+                            <div style={styles.codeContent}>
+                              <span style={styles.categoryName}>{change.category}</span>
+                              <span style={styles.operator}> = </span>
+                              <span style={styles.oldValue}>{change.oldValue}</span>
+                              <span style={styles.arrow}> -> </span>
+                              <span style={styles.newValue}>{change.newValue}</span>
+                            </div>
+                          </div>
+                          {index < numericChanges.length - 1 && index % 2 === 1 && (
+                            <div style={styles.codeLine}>
+                              <span style={styles.lineNumber}>{index + 3}</span>
+                              <div style={styles.codeContent}>
+                                <span style={styles.operator}>...</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </pre>
+                  ) : (
+                    // Regular text comparison
+                    <div style={styles.resultContent}>
+                      {changes.map((part, index) => (
+                        <div key={index} style={part.added ? styles.diffAdded : part.removed ? styles.diffRemoved : {}}>
+                          {part.value.trim().split('\n').map((line, i) => (
+                            <div key={i} style={{ display: 'flex' }}>
+                              <span style={{ marginRight: '0.5rem', userSelect: 'none' }}>{part.added ? '+' : '-'}</span>
+                              <span>{line}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
