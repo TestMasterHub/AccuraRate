@@ -1,15 +1,5 @@
-.icon{
-  max-width: 24px;
-  max-height: 24px;
-  margin-right: 8px;
-}
-.brand{
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  font-weight: bold;
-  font-size: 1.25rem;
-  color: white !important;
-  background-color: pink;
-}
+/* AccuraRate v2 — Dark Mode */
+html { scroll-behavior: smooth; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #07090f; color: #e2e8f0; }
+::selection { background: rgba(37,99,235,0.35); color: #f1f5f9; }
