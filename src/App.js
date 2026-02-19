@@ -21,12 +21,10 @@ const Icons = {
   shield:   ["M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"],
   lock:     ["M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2z", "M7 11V7a5 5 0 0 1 10 0v4"],
   cpu:      "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM8 12h8M12 8v8",
-  zap:      "M13 2L3 14h9l-1 8 10-12h-9l1-8z",
   eye_off:  ["M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94", "M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19", "M1 1l22 22"],
   page:     ["M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z", "M14 2v6h6"],
   info:     ["M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z", "M12 8h.01M12 12v4"],
   ocr:      "M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2",
-  math:     "M4 6h16M4 12h16M4 18h7",
 };
 
 // ── Spinner ──────────────────────────────────────────────────────────────────
@@ -284,18 +282,6 @@ const InlineDiff = ({ oldVal, newVal, type }) => {
   );
 };
 
-// ── Feature Card ──────────────────────────────────────────────────────────────
-const FeatureCard = ({ icon, title, desc }) => (
-  <div
-    style={{ padding: '20px', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', transition: 'border-color 0.2s' }}
-    onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(59,130,246,0.3)'}
-    onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)'}
-  >
-    <div style={{ color: '#3b82f6', marginBottom: '10px', display: 'flex' }}><Icon d={icon} size={18} /></div>
-    <div style={{ fontSize: '13px', fontWeight: '700', color: '#cbd5e1', marginBottom: '6px' }}>{title}</div>
-    <div style={{ fontSize: '11px', color: '#94a3b8', lineHeight: 1.7 }}>{desc}</div>
-  </div>
-);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MAIN APP
@@ -427,7 +413,7 @@ export default function App() {
           </div>
 
           {/* Open source pill */}
-          <a href="https://github.com/TestMasterHub/AccuraRate" target="_blank" rel="noreferrer"
+          <a href="https://github.com/testmasterhub/accurarrate" target="_blank" rel="noreferrer"
             style={{
               display: 'flex', alignItems: 'center', gap: '6px', padding: '5px 12px',
               borderRadius: '20px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
